@@ -140,6 +140,9 @@ func NewObjectMapper(mappings interface{}, exprF expression.Factory) (expr expre
 					if err != nil {
 						return nil, err
 					}
+				} else if strings.HasPrefix(mk, Merge) {
+					mergeFields := mv.([]interface{})
+					return createMergeMapper(mergeFields, exprF)
 				} else {
 					objFields[mk], err = NewObjectMapper(mv, exprF)
 					if err != nil {
