@@ -111,7 +111,22 @@ func (s Status) String() string {
 }
 
 func PostTriggerEvent(tStatus Status, name string) {
-	TriggerStatus.status[name] = tStatus
+	TriggerStatus.status[name] = managed.StatusInfo{
+		Name:   name,
+		Status: getManagedStatus(tStatus),
+	}
+	if event.HasListener(TriggerEventType) {
+		te := &triggerEvent{name: name, status: tStatus}
+		event.Post(TriggerEventType, te)
+	}
+}
+
+func PostTriggerErrorEvent(tStatus Status, name string, err error) {
+	TriggerStatus.status[name] = managed.StatusInfo{
+		Name:   name,
+		Status: getManagedStatus(tStatus),
+		Error:  err,
+	}
 	if event.HasListener(TriggerEventType) {
 		te := &triggerEvent{name: name, status: tStatus}
 		event.Post(TriggerEventType, te)
