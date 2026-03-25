@@ -8,15 +8,23 @@ import (
 )
 
 type triggerStatus struct {
-	status map[string]Status
+	status map[string]managed.StatusInfo
 }
 
 var TriggerStatus = triggerStatus{
-	status: make(map[string]Status),
+	status: make(map[string]managed.StatusInfo),
 }
 
-func (t triggerStatus) GetStatus(triggerId string) managed.Status {
-	status := t.status[triggerId]
+func (t triggerStatus) GetStatus(triggerId string) managed.StatusInfo {
+	status, ok := t.status[triggerId]
+	if ok {
+		return status
+	} else {
+		return managed.StatusInfo{Name: triggerId}
+	}
+}
+
+func getManagedStatus(status Status) managed.Status {
 	switch status {
 	case STARTED:
 		return managed.StatusStarted

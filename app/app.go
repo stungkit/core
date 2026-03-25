@@ -285,8 +285,8 @@ type triggerWrapper struct {
 
 func (t triggerWrapper) GetStatus() *managed.StatusInfo {
 	status := trigger.TriggerStatus.GetStatus(t.id)
-	if status != "" {
-		return &managed.StatusInfo{Status: status}
+	if status.Status != "" {
+		return &status
 	}
 	return t.status
 }
